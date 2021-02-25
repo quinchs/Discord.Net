@@ -247,15 +247,15 @@ namespace Discord.WebSocket
                     await _gatewayLogger.DebugAsync("Identifying").ConfigureAwait(false);
                     await ApiClient.SendIdentifyAsync(shardID: ShardId, totalShards: TotalShards, guildSubscriptions: _guildSubscriptions, gatewayIntents: _gatewayIntents, presence: BuildCurrentStatus()).ConfigureAwait(false);
                 }
-
-                //Wait for READY
-                await _connection.WaitAsync().ConfigureAwait(false);
             }
             finally
             {
                 if (locked)
                     _shardedClient.ReleaseIdentifyLock();
             }
+
+            //Wait for READY
+            await _connection.WaitAsync().ConfigureAwait(false);
         }
         private async Task OnDisconnectingAsync(Exception ex)
         {
@@ -1739,6 +1739,61 @@ namespace Discord.WebSocket
                                     else
                                     {
                                         await UnknownGuildAsync(type, data.GuildId).ConfigureAwait(false);
+                                    }
+
+                                }
+                                break;
+                            case "INVITE_CREATE":
+                                {
+                                    await _gatewayLogger.DebugAsync("Received Dispatch (INVITE_CREATE)").ConfigureAwait(false);
+                                    var data = (payload as JToken).ToObject<InviteCreatedEvent>(_serializer);
+                                    if(data.GuildID.HasValue)
+                                    {
+                                        var guild = State.GetGuild(data.GuildID.Value);
+                                        if (guild != null)
+                                        {
+                                            if (!guild.IsSynced)
+                                            {
+                                                await UnsyncedGuildAsync(type, guild.Id).ConfigureAwait(false);
+                                                return;
+                                            }
+
+                                            var channel = guild.GetChannel(data.ChannelID);
+
+                                            if (channel != null)
+                                            {
+                                                var invite = new SocketGuildInvite(this, guild, channel, data.InviteCode, data);
+                                                guild.AddSocketInvite(invite);
+                                                await TimedInvokeAsync(_inviteCreatedEvent, nameof(InviteCreated), invite).ConfigureAwait(false);
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                            case "INVITE_DELETE":
+                                {
+                                    await _gatewayLogger.DebugAsync("Received Dispatch (INVITE_DELETE)").ConfigureAwait(false);
+                                    var data = (payload as JToken).ToObject<InviteDeletedEvent>(_serializer);
+                                    if(data.GuildID.IsSpecified)
+                                    {
+                                        var guild = State.GetGuild(data.GuildID.Value);
+                                        if (guild != null)
+                                        {
+                                            if (!guild.IsSynced)
+                                            {
+                                                await UnsyncedGuildAsync(type, guild.Id).ConfigureAwait(false);
+                                                return;
+                                            }
+
+                                            var channel = guild.GetChannel(data.ChannelID);
+
+                                            if (channel != null)
+                                            {
+                                                var invite = guild.RemoveSocketInvite(data.Code);
+                                                var cache = new Cacheable<SocketGuildInvite, string>(null, data.Code, invite != null, async () => await guild.GetSocketInviteAsync(data.Code));
+                                                await TimedInvokeAsync(_inviteDeletedEvent, nameof(InviteDeleted), cache).ConfigureAwait(false);
+                                            }
+                                        }
                                     }
 
                                 }
