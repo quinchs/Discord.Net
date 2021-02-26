@@ -272,7 +272,7 @@ namespace Discord.SlashCommands
                 // 0 -> then use the default description
                 // 1 -> Use the value from that attribute
                 // 2+ -> Throw an error. This shouldn't normaly happen, but we check for sake of sanity
-                var descriptions = methodParameter.GetCustomAttributes(typeof(Description));
+                var descriptions = methodParameter.GetCustomAttributes<Description>();
                 if (descriptions.Count() == 0)
                     newParameter.Description = Description.DefaultDescription;
                 else if (descriptions.Count() > 1)
