@@ -281,12 +281,8 @@ namespace Discord.SlashCommands
                 // If we have a nullble type (int? or bool?) mark it as such.
                 newParameter.Nullable = GetNullableStatus(methodParameter);
 
-                // Test for the [Required] Attribute
-                var requiredAttributes = methodParameter.GetCustomAttributes(typeof(Required));
-                if (requiredAttributes.Count() == 1)
-                    newParameter.Required = true;
-                else if (requiredAttributes.Count() > 1)
-                    throw new Exception($"Too many Required attributes on a single parameter ({method.Name} -> {methodParameter.Name}). It can only contain one!");
+                // Check if the parameter is optional.
+                newParameter.Required = !methodParameter.IsOptional;
 
                 // Test for the [Choice] Attribute
                 // A parameter cna have multiple Choice attributes, and for each we're going to add it's key-value pair.

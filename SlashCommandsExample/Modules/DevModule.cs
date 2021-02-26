@@ -22,8 +22,7 @@ namespace SlashCommandsExample.Modules
 
         [SlashCommand("echo", "I'll repeate everything you said to me, word for word.")]
         public async Task EchoAsync(
-            [Description("The message you want repetead")]
-            [Required]
+            [Description("The message you want repeated")]
             string message)
         {
             await Reply($"{Interaction.Member?.Nickname ?? Interaction.Member?.Username} told me to say this: \r\n{message}");
@@ -48,14 +47,13 @@ namespace SlashCommandsExample.Modules
 
         [SlashCommand("stats","Get the stats from Game(tm) for players or teams.")]
         public async Task GetStatsAsync(
-            [Required]
             [Choice("XBOX","xbox")]
             [Choice("PlayStation","ps")]
             [Choice("PC","pc")]
             string platform,
             [Choice("Player",1)]
             [Choice("Team",2)]
-            int searchType
+            int searchType = 0
             )
         {
             await Reply($"Well I got this: {platform}, {searchType}");
