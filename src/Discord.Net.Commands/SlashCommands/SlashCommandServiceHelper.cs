@@ -283,7 +283,7 @@ namespace Discord.SlashCommands
                 // Set the Type of the parameter.
                 // In the case of int and int? it returns the same type - INTEGER.
                 // Same with bool and bool?.
-                newParameter.Type = TypeFromMethodParameter(methodParameter);
+                newParameter.Type = TypeFromMethodParameter(method, methodParameter);
 
                 // If we have a nullble type (int? or bool?) mark it as such.
                 newParameter.Nullable = GetNullableStatus(methodParameter);
@@ -323,16 +323,14 @@ namespace Discord.SlashCommands
         /// <summary>
         /// Get the type of command option from a method parameter info.
         /// </summary>
-        private static ApplicationCommandOptionType TypeFromMethodParameter(ParameterInfo methodParameter)
+        private static ApplicationCommandOptionType TypeFromMethodParameter(MethodInfo method, ParameterInfo methodParameter)
         {
             // Can't do switch -- who knows why?
-            if (methodParameter.ParameterType == typeof(int) ||
-                methodParameter.ParameterType == typeof(int?))
+            if (methodParameter.ParameterType == typeof(int) || methodParameter.ParameterType == typeof(int?))
                 return ApplicationCommandOptionType.Integer;
             if (methodParameter.ParameterType == typeof(string))
                 return ApplicationCommandOptionType.String;
-            if (methodParameter.ParameterType == typeof(bool) ||
-                methodParameter.ParameterType == typeof(bool?))
+            if (methodParameter.ParameterType == typeof(bool) || methodParameter.ParameterType == typeof(bool?))
                 return ApplicationCommandOptionType.Boolean;
             if (methodParameter.ParameterType == typeof(SocketGuildChannel))
                 return ApplicationCommandOptionType.Channel;
@@ -341,7 +339,7 @@ namespace Discord.SlashCommands
             if (methodParameter.ParameterType == typeof(SocketGuildUser))
                 return ApplicationCommandOptionType.User;
 
-            throw new Exception($"Got parameter type other than int, string, bool, guild, role, or user. {methodParameter.Name}");
+            throw new Exception($"Method `{method.Name}` parameter `{methodParameter}` contain a type other than int, string, bool, guild, role, or user.");
         }
 
         /// <summary>
