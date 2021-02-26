@@ -90,6 +90,7 @@ namespace Discord.SlashCommands
             }
             return commandGroups;
         }
+
         public static bool TryGetCommandGroupAttribute(Type module, out CommandGroup commandGroup)
         {
             if(!module.IsPublic && !module.IsNestedPublic)
@@ -114,6 +115,7 @@ namespace Discord.SlashCommands
                 return true;
             }
         }
+
         public static bool IsCommandModuleGlobal(Type userModuleType)
         {
             // Verify that we only have one [Global] attribute
@@ -129,6 +131,7 @@ namespace Discord.SlashCommands
             }
             return true;
         }
+
         /// <summary>
         /// Prepare all of the commands and register them internally.
         /// </summary>
@@ -152,6 +155,7 @@ namespace Discord.SlashCommands
             }
             return result;
         }
+
         public static void CreateSubCommandInfos(Dictionary<string, SlashCommandInfo> result, List<SlashModuleInfo> subCommandGroups, SlashCommandService slashCommandService)
         {
             foreach (var subCommandGroup in subCommandGroups)
@@ -164,6 +168,7 @@ namespace Discord.SlashCommands
                 CreateSubCommandInfos(result, subCommandGroup.commandGroups, slashCommandService);
             }
         }
+
         private static List<SlashCommandInfo> CreateSameLevelCommands(Dictionary<string, SlashCommandInfo> result, TypeInfo userModule, SlashModuleInfo moduleInfo)
         {
             var commandMethods = userModule.GetMethods();
@@ -217,6 +222,7 @@ namespace Discord.SlashCommands
             slashCommand = slashCommandAttributes.First() as SlashCommand;
             return true;
         }
+
         /// <summary>
         /// Determins if the method has a [Global] Attribute.
         /// </summary>
@@ -235,6 +241,7 @@ namespace Discord.SlashCommands
             }
             return true;
         }
+
         /// <summary>
         /// Process the parameters of this method, including all the attributes.
         /// </summary>
@@ -312,6 +319,7 @@ namespace Discord.SlashCommands
             }
             return finalParameters;
         }
+
         /// <summary>
         /// Get the type of command option from a method parameter info.
         /// </summary>
@@ -349,6 +357,7 @@ namespace Discord.SlashCommands
             }
             return false;
         }
+
         /// <summary>
         /// Creae a delegate from methodInfo. Taken from
         /// https://stackoverflow.com/a/40579063/8455128
@@ -456,6 +465,7 @@ namespace Discord.SlashCommands
 
             return;
         }
+
         /// <summary>
         /// Build and return all of the commands this assembly contians.
         /// </summary>
