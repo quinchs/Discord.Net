@@ -339,7 +339,7 @@ namespace Discord.SlashCommands
             if (methodParameter.ParameterType == typeof(SocketGuildUser))
                 return ApplicationCommandOptionType.User;
 
-            throw new Exception($"Method `{method.Name}` parameter `{methodParameter}` contain a type other than int, string, bool, guild, role, or user.");
+            throw new Exception($"Method `{method.DeclaringType.Name}.{method.Name}` parameter `{methodParameter}` is of an unsupported type.\nSupported types are: int, string, bool, guild, role, or user.");
         }
 
         /// <summary>
