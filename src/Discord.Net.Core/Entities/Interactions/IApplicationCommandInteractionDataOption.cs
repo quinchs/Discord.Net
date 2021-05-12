@@ -17,6 +17,11 @@ namespace Discord
         string Name { get; }
 
         /// <summary>
+        ///     The type of this <see cref="IApplicationCommandInteractionDataOption"/>.
+        /// </summary>
+        public ApplicationCommandOptionType Type { get; }
+
+        /// <summary>
         ///     The value of the pair.
         ///     <note>
         ///         This objects type can be any one of the option types in <see cref="ApplicationCommandOptionType"/>

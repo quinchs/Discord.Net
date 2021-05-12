@@ -17,6 +17,9 @@ namespace Discord.WebSocket
         public string Name { get; private set; }
 
         /// <inheritdoc/>
+        public ApplicationCommandOptionType Type { get; private set; }
+
+        /// <inheritdoc/>
         public object Value { get; private set; }
 
         /// <summary>
@@ -31,6 +34,7 @@ namespace Discord.WebSocket
         internal SocketInteractionDataOption(Model model, DiscordSocketClient discord, ulong guild)
         {
             this.Name = model.Name;
+            this.Type = model.Type;
             this.Value = model.Value.IsSpecified ? model.Value.Value : null;
             this.discord = discord;
             this.guild = guild;
